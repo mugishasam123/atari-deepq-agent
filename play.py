@@ -4,11 +4,13 @@ Uses greedy action selection (no exploration) and renders the game.
 """
 import argparse
 import time
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="gymnasium")
 from stable_baselines3 import DQN
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.env_util import make_atari_env
 
-ENV_ID = "ALE/Pong-v5"
+ENV_ID = "ALE/SpaceInvaders-v5"
 
 
 def parse_args():
@@ -41,7 +43,7 @@ def main():
     delay = 1.0 / args.fps
 
     for ep in range(args.n_episodes):
-        obs, _ = env.reset()
+        obs = env.reset()
         total_reward = 0.0
         print(f"\n--- Episode {ep + 1}/{args.n_episodes} ---")
 

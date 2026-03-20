@@ -136,11 +136,11 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 | # | Hyperparameter set | Noted behavior |
 |---|--------------------|----------------|
-| 1 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 2 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 3 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 5 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 1 | lr=1e-4, gamma=0.99, batch=64, eps_start=1.0, eps_end=0.05, eps_decay=50k | Space Invaders Test Run (150k steps). Mean reward +241. Rapid learning and dodging observed. |
+| 2 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.20, eps_decay=250k | High Final Epsilon (0.20). Mean reward +193. Worse than baseline. Forced exploration prevented exploiting learned skills. |
+| 3 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.01, eps_decay=250k | Low Final Epsilon (0.01). Mean reward +184. Decay was too slow (250k). Epsilon only reached 0.40 at the end of the 150k run, causing excessive exploration. |
+| 4 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.05, eps_decay=50k | Fast Epsilon Decay (50k). Mean reward +251. Best result. Agent completed exploration early, allowing 100k steps of pure strategy exploitation. |
+| 5 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.05, eps_decay=500k | Slow Epsilon Decay (500k). Mean reward +167. Agent was still exploring 71.5% of the time at the end of training, resulting in a very poor score. |
 | 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |

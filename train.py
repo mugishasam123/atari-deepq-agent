@@ -7,7 +7,8 @@ import os
 from stable_baselines3 import DQN
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.env_util import make_atari_env
-ENV_ID = "ALE/Pong-v5"
+from stable_baselines3.common.callbacks import ProgressBarCallback
+ENV_ID = "ALE/SpaceInvaders-v5"
 MODEL_DIR = "models"
 LOG_DIR = "logs"
 
@@ -35,6 +36,12 @@ def parse_args():
                         help="Parallel environments")
     parser.add_argument("--save_as_best", action="store_true",
                         help="Also save final model as models/dqn_model.zip (for submission)")
+    parser.add_argument("--device", type=str, default="auto",
+                        help="Device to use (cuda, mps, cpu, auto)")
+    parser.add_argument("--learning_starts", type=int, default=10000,
+                        help="Number of steps before training starts")
+    parser.add_argument("--buffer_size", type=int, default=100000,
+                        help="Size of the replay buffer (reduce if out of RAM)")
     return parser.parse_args()
 
 
@@ -58,6 +65,19 @@ def main():
     env = make_atari_env(ENV_ID, n_envs=args.n_envs)
     env = VecFrameStack(env, n_stack=4)
 
+    # Determine device
+    device = args.device
+    if device == "auto":
+        import torch
+        if torch.backends.mps.is_available():
+            device = "mps"
+        elif torch.cuda.is_available():
+            device = "cuda"
+        else:
+            device = "cpu"
+    
+    print("Using device:", device)
+
     exploration_fraction = args.epsilon_decay / args.steps
 
     model = DQN(
@@ -69,16 +89,24 @@ def main():
         exploration_initial_eps=args.epsilon_start,
         exploration_final_eps=args.epsilon_end,
         exploration_fraction=exploration_fraction,
-        buffer_size=100_000,
-        learning_starts=50_000,
+        buffer_size=args.buffer_size,
+        learning_starts=args.learning_starts,
         target_update_interval=1_000,
-        train_freq=4,
+        train_freq=(4, "step"),
         gradient_steps=1,
         verbose=1,
         tensorboard_log=log_path,
+        device=device,
     )
 
-    model.learn(total_timesteps=args.steps)
+    print(f"\nStarting training for {args.steps} timesteps...")
+    progress_bar_callback = ProgressBarCallback()
+    
+    model.learn(
+        total_timesteps=args.steps,
+        callback=progress_bar_callback
+    )
+    
     model.save(model_path)
     print("Saved:", model_path)
 
