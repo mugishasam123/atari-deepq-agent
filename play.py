@@ -6,6 +6,7 @@ import argparse
 import time
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="gymnasium")
+import ale_py  # registers ALE/* env ids with Gymnasium before gym.make
 from stable_baselines3 import DQN
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.env_util import make_atari_env
