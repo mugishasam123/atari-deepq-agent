@@ -2,7 +2,7 @@
 
 Formative 3 assignment: train and evaluate a DQN agent on an Atari game using **Stable Baselines3** and **Gymnasium**.
 
-- **Environment:** `ALE/Pong-v5`
+- **Environment:** `ALE/SpaceInvaders-v5`
 - **Deliverables:** `train.py`, `play.py`, hyperparameter table, and gameplay video.
 
 ---
@@ -117,16 +117,16 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 | # | Hyperparameter set | Noted behavior |
 |---|--------------------|----------------|
-| 1 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 2 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 3 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 5 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 9 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 1 | lr=1e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fastest training (539 FPS, 7:43). Lower final reward (245). Loss 0.193. Smaller batch enables more frequent updates but noisier gradients, resulting in suboptimal performance. |
+| 2 | lr=1e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Balanced performance (279 reward, 496 FPS, 8:13). Loss 0.119 - lowest among lr=1e-4 runs. Larger batch provides more stable gradient estimates, improving reward by +34 over batch=16. |
+| 3 | lr=1e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Slower training (443 FPS, 9:03). Lower reward (255) than batch=32. Loss 0.344 - higher than batch=32. Larger batch size beyond 32 shows diminishing returns; may be underfitting with fixed learning rate. |
+| 4 | lr=2.5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (535 FPS, 7:47). Surprisingly low reward (223) - worst among all runs so far. Extremely low loss (0.0511) indicates possible underfitting. Higher learning rate with small batch may cause unstable updates. |
+| 5 | lr=2.5e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Baseline. High reward (290). Slowest training (58 FPS, 17:40). Higher loss (0.971). Learning rate 2.5x larger enables faster convergence but at cost of slower wall-clock time. |
+| 6 | lr=2.5e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Moderate training speed (447 FPS, 9:18). Low reward (226) - second worst. Loss 0.309. Similar poor performance to batch=16, suggesting batch=32 is the optimal size for this learning rate. |
+| 7 | lr=5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (521 FPS, 7:59). Very low reward (204). Extremely low loss (0.0676). Higher learning rate (5e-4) with batch=16 completely fails to learn effectively. Model likely stuck in poor local optimum. |
+| 8 | lr=5e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Strong performer (292 reward). Moderate training speed (260-489 FPS, 8:15). Very low loss (0.0577). Learning rate 5e-4 with batch=32 achieves excellent balance. |
+| 9 | lr=5e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 |  BEST PERFORMER! Outstanding reward (338) - significantly higher than all others! Moderate training speed (452 FPS, 9:12). Loss 0.41. Larger batch size (64) with learning rate 5e-4 enables much better learning, possibly due to more stable gradient estimates. |
+| 10 | lr=1e-3, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Performance collapse! Very low reward (207). High loss (0.856). Learning rate too high (1e-3) causes unstable training; model fails to converge. Demonstrates importance of appropriate learning rate selection. |
 
 ---
 
@@ -153,18 +153,24 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 **Mission:** Grid search on lr and epsilon_decay; document which combinations perform best and why.
 
+**Setup (all runs):** `ALE/SpaceInvaders-v5`, `CnnPolicy`, 500,000 timesteps, 4 parallel envs. Fixed unless noted: `gamma=0.99`, `batch_size=32`, `epsilon_start=1.0`, `epsilon_end=0.05`. Metrics from TensorBoard `rollout/ep_rew_mean` (mean episode reward).
+
 | # | Hyperparameter set | Noted behavior |
 |---|--------------------|----------------|
-| 1 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 2 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 3 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 5 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 9 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 1 | lr=0.0001, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=250000 | Peak ep_rew_mean ~290.5; final ~258.2. Stable but slower learning than higher lr. |
+| 2 | lr=0.00025, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=50000 | Peak ~318.4; final ~295.1. Fast epsilon decay helped exploitation. |
+| 3 | lr=0.00025, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=100000 | Peak ~316.1; final ~296.9. Strong; similar to exp 2. |
+| 4 | lr=0.00025, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Peak ~337.6; final ~304.0. **Second best** — good balance of lr and decay. |
+| 5 | lr=0.00025, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=250000 | Peak ~299.5; final ~299.5. Slower decay than 2–4; plateaued below best peaks. |
+| 6 | lr=0.0005, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=50000 | Peak **~344.6**; final **~332.5**. **Best run** — high lr + fast decay matched Space Invaders well. |
+| 7 | lr=0.0005, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Peak ~299.5; final ~277.1. Same peak as exp 5 tier; decay 150k weaker than 50k at this lr. |
+| 8 | lr=0.0001, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=50000 | Peak ~278.5; final ~257.0. Low lr limited gains even with fast decay. |
+| 9 | lr=0.0001, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Peak ~302.9; final ~273.3. Mid-tier; better than exp 1 & 8 for same lr. |
+| 10 | lr=0.0003, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=100000 | Peak ~290.1; final ~237.1. Reward dipped late; less stable finish than top runs. |
+
+**Best model (for `play.py`):** `models/policy-CnnPolicy_lr-0.0005_gamma-0.99_batch-32_eps1.0-0.05_decay-50000.zip`
+
+**Insight:** Highest mean rewards came from **lr=5×10⁻⁴** with **epsilon_decay=50,000** (exploration ends early; most steps exploit). **lr=2.5×10⁻⁴** with **epsilon_decay=150,000** was the next best. Very slow decay or low lr at 500k steps underperformed relative to fast-decay configs.
 
 
 ---
