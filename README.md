@@ -117,7 +117,7 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 | # | Hyperparameter set | Noted behavior |
 |---|--------------------|----------------|
-| 1 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 1 | lr=1e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fastest training (539 FPS, 7:43). Lower final reward (245). Loss 0.193. Smaller batch enables more frequent updates but noisier gradients, resulting in suboptimal performance. |
 | 2 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 3 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
