@@ -123,7 +123,7 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 | 4 | lr=2.5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (535 FPS, 7:47). Surprisingly low reward (223) - worst among all runs so far. Extremely low loss (0.0511) indicates possible underfitting. Higher learning rate with small batch may cause unstable updates. |
 | 5 | lr=2.5e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Baseline. High reward (290). Slowest training (58 FPS, 17:40). Higher loss (0.971). Learning rate 2.5x larger enables faster convergence but at cost of slower wall-clock time. |
 | 6 | lr=2.5e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Moderate training speed (447 FPS, 9:18). Low reward (226) - second worst. Loss 0.309. Similar poor performance to batch=16, suggesting batch=32 is the optimal size for this learning rate. |
-| 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 7 | lr=5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (521 FPS, 7:59). Very low reward (204). Extremely low loss (0.0676). Higher learning rate (5e-4) with batch=16 completely fails to learn effectively. Model likely stuck in poor local optimum. |
 | 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 9 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
