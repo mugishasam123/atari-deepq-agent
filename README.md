@@ -126,7 +126,7 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 | 7 | lr=5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (521 FPS, 7:59). Very low reward (204). Extremely low loss (0.0676). Higher learning rate (5e-4) with batch=16 completely fails to learn effectively. Model likely stuck in poor local optimum. |
 | 8 | lr=5e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Strong performer (292 reward). Moderate training speed (260-489 FPS, 8:15). Very low loss (0.0577). Learning rate 5e-4 with batch=32 achieves excellent balance. |
 | 9 | lr=5e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 |  BEST PERFORMER! Outstanding reward (338) - significantly higher than all others! Moderate training speed (452 FPS, 9:12). Loss 0.41. Larger batch size (64) with learning rate 5e-4 enables much better learning, possibly due to more stable gradient estimates. |
-| 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 10 | lr=1e-3, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Performance collapse! Very low reward (207). High loss (0.856). Learning rate too high (1e-3) causes unstable training; model fails to converge. Demonstrates importance of appropriate learning rate selection. |
 
 ---
 
