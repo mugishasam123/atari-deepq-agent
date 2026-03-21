@@ -120,7 +120,7 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 | 1 | lr=1e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fastest training (539 FPS, 7:43). Lower final reward (245). Loss 0.193. Smaller batch enables more frequent updates but noisier gradients, resulting in suboptimal performance. |
 | 2 | lr=1e-4, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Balanced performance (279 reward, 496 FPS, 8:13). Loss 0.119 - lowest among lr=1e-4 runs. Larger batch provides more stable gradient estimates, improving reward by +34 over batch=16. |
 | 3 | lr=1e-4, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Slower training (443 FPS, 9:03). Lower reward (255) than batch=32. Loss 0.344 - higher than batch=32. Larger batch size beyond 32 shows diminishing returns; may be underfitting with fixed learning rate. |
-| 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| 4 | lr=2.5e-4, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Fast training (535 FPS, 7:47). Surprisingly low reward (223) - worst among all runs so far. Extremely low loss (0.0511) indicates possible underfitting. Higher learning rate with small batch may cause unstable updates. |
 | 5 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
 | 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
