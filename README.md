@@ -96,18 +96,18 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 **Mission:** Find the optimal discount factor (gamma) and its interaction with lr and batch_size.
 
-| # | Hyperparameter set | Noted behavior |
-|---|--------------------|----------------|
-| 1 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 2 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 3 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 4 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 5 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 9 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| # | Hyperparameter set                            | Noted behavior |
+|---|-----------------------------------------------|----------------|
+| 1 |lr=0.00025, gamma=0.95, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 (250k steps) | ep_rew_mean=282, best=303. Reduced gamma (0.95) discounts future rewards more heavily. At 250k steps the agent is still learning — good mid-training baseline showing gamma < 0.99 converges faster early on.               |
+| 2 | lr=0.00025, gamma=0.95, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 (500k steps) | ep_rew_mean=446, best=473. Best reward overall. Doubling steps with gamma=0.95 gave the largest jump (+164 mean). Shows that moderate gamma pairs well with this lr when given enough training time.               |
+| 3 | lr=0.001, gamma=0.9, batch=128, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | ep_rew_mean=447, reward=470. Low gamma (0.9) + high lr + large batch. Strong performance despite heavy discounting — large batch stabilised the aggressive learning rate. Fastest wall-clock time among the longer runs (1:51).               |
+| 4 |lr=0.0005, gamma=0.8, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | ep_rew_mean=381, best=400. Very low gamma (0.8) — agent is near-sighted and only values immediate rewards. Decent result suggests the game's short-horizon structure (invader lanes) partially suits greedy planning, but the score ceiling is clearly limited.               |
+| 5 |lr=0.005, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000| ep_rew_mean=210, reward=254. Very high lr (0.005) caused unstable updates despite a standard gamma. Loss (0.151) and low reward confirm the learning rate overwhelmed the gradient signal — gamma alone could not compensate for overshooting.               |
+| 6 | lr=0.0001, gamma=0.99, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | ep_rew_mean=290, best=290. Standard gamma with conservative lr. Stable but slow convergence — the agent learned reliably without diverging. Low lr capped the reward ceiling; gamma=0.99 needed a higher lr to leverage long-horizon planning effectively.               |
+| 7 | lr=0.0005, gamma=0.99, batch=128, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | ep_rew_mean=408, best=434. Good synergy between high gamma and moderate lr. Large batch (128) smoothed gradients enough to handle gamma=0.99's sensitivity to Q-value overestimation. Strong second-tier performer.               |
+| 8 | lr=0.01, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 |ep_rew_mean=219. Extreme lr (0.01) with small batch and high gamma — worst combination. High gamma amplifies overestimation errors, and the very high lr compounded instability. Small batch gave noisy gradients; fastest FPS (196 it/s) but worst quality learning.                |
+| 9 | lr=0.0005, gamma=0.99, batch=16, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 |ep_rew_mean=258, reward=256. Same lr and gamma as run 7 but batch=16 instead of 128. The drop from 408 → 258 highlights how critical batch size is when gamma=0.99: noisy gradients from a tiny batch destabilise value estimates and suppress performance.                |
+| 10 |lr=0.0001, gamma=0.9, batch=64, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000|ep_rew_mean=364, best=390. Low gamma + low lr: more conservative in both discounting and update magnitude. Mid-tier result — reduced gamma helped avoid overestimation at the cost of long-term credit assignment; pairing with a slightly higher lr would likely push this further.                |
 
 ---
 
