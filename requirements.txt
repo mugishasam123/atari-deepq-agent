@@ -1,9 +1,9 @@
-gymnasium[atari,accept-rom-license]>=0.29.0
-ale-py>=0.8.0
-stable-baselines3>=2.3.0
-torch>=2.0.0
-numpy>=1.24,<3.0
-opencv-python>=4.8
+gymnasium[atari,accept-rom-license]==0.29.1
+ale-py==0.8.1
+stable-baselines3==2.3.0
+torch>=2.2.0,<2.5.0
+numpy>=1.26,<3.0
+opencv-python>=4.8,<5.0
 tensorboard
 tqdm
 rich
