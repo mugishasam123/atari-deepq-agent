@@ -54,17 +54,17 @@ Train with default or custom hyperparameters. Model and logs are saved under `mo
 python train.py --steps 500000 [options]
 ```
 
-**Options:** `--policy` (CnnPolicy|MlpPolicy), `--lr`, `--gamma`, `--batch_size`, `--epsilon_start`, `--epsilon_end`, `--epsilon_decay`, `--n_envs`. Use `--save_as_best` to also save the final model as `models/dqn_model.zip` (for submission).
+**Options:** `--policy` (CnnPolicy|MlpPolicy), `--lr`, `--gamma`, `--batch_size`, `--epsilon_start`, `--epsilon_end`, `--epsilon_decay`, `--n_envs`, `--buffer_size`. Use `--save_as_best` to also save the final model as `models/dqn_model.zip` (for submission).
 
 **Example (recommended baseline):**
 ```bash
-python train.py --steps 500000 --lr 2.5e-4 --gamma 0.99 --batch_size 32 --epsilon_decay 150000
+python train.py --steps 500000 --lr 2.5e-4 --gamma 0.99 --batch_size 32 --epsilon_decay 50000 --save_as_best
 ```
 
 **Compare policies:**
 ```bash
-python train.py --policy CnnPolicy --steps 250000
-python train.py --policy MlpPolicy --steps 250000
+python train.py --policy CnnPolicy --steps 500000
+python train.py --policy MlpPolicy --steps 500000
 ```
 
 ### Playing
@@ -79,7 +79,7 @@ python play.py --model models/dqn_model.zip --n_episodes 5
 
 ## Hyperparameter experiments (10 per member)
 
-Each member runs **10 different hyperparameter combinations**, records them in the table below, and notes behavior (reward trend, stability, episode length, etc.). Use the same **total steps** for all runs (e.g. 250k or 500k) for fair comparison.
+Each member runs **10 different hyperparameter combinations**, records them in the table below, and notes behavior (reward trend, stability, episode length, etc.). All runs use **500,000 total steps** for fair comparison.
 
 ### Role split
 
@@ -132,20 +132,26 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 
 ### Makuochi Prince Okoye – Epsilon decay & epsilon_end
 
-**Mission:** Optimize exploration vs exploitation by testing epsilon_decay and epsilon_end.
+**Mission:** Optimize exploration vs exploitation by testing epsilon_decay, epsilon_end, buffer size, and learning rate on Space Invaders (500k steps each).
 
-| # | Hyperparameter set | Noted behavior |
-|---|--------------------|----------------|
-| 1 | lr=1e-4, gamma=0.99, batch=64, eps_start=1.0, eps_end=0.05, eps_decay=50k | Space Invaders Test Run (150k steps). Mean reward +241. Rapid learning and dodging observed. |
-| 2 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.20, eps_decay=250k | High Final Epsilon (0.20). Mean reward +193. Worse than baseline. Forced exploration prevented exploiting learned skills. |
-| 3 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.01, eps_decay=250k | Low Final Epsilon (0.01). Mean reward +184. Decay was too slow (250k). Epsilon only reached 0.40 at the end of the 150k run, causing excessive exploration. |
-| 4 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.05, eps_decay=50k | Fast Epsilon Decay (50k). Mean reward +251. Best result. Agent completed exploration early, allowing 100k steps of pure strategy exploitation. |
-| 5 | lr=2.5e-4, gamma=0.99, batch=32, eps_start=1.0, eps_end=0.05, eps_decay=500k | Slow Epsilon Decay (500k). Mean reward +167. Agent was still exploring 71.5% of the time at the end of training, resulting in a very poor score. |
-| 6 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 7 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 8 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 9 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
-| 10 | lr=, gamma=, batch=, epsilon_start=, epsilon_end=, epsilon_decay= | |
+| # | Hyperparameter set | Mean Reward | Noted behavior |
+|---|-------------------|-------------|----------------|
+| 1 | lr=2.5e-4, batch=32, eps_end=0.05, eps_decay=250k | +288 | Baseline. Solid performance with balanced exploration/exploitation schedule. |
+| 2 | lr=2.5e-4, batch=32, eps_end=0.20, eps_decay=250k | +250 | High Final Epsilon. Forced 20% randomness capped performance below baseline. |
+| 3 | lr=1e-4, batch=64, eps_end=0.01, eps_decay=50k | +155 | Low LR + Large Batch. Loss exploded to 2240 — catastrophic divergence. |
+| 4 | lr=2.5e-4, batch=32, eps_end=0.05, eps_decay=50k | **+364** | **Best result!** Fast decay gave 450k steps of pure exploitation. |
+| 5 | lr=5e-4, batch=32, eps_end=0.02, eps_decay=50k | +297 | Higher LR caused slight instability vs the 2.5e-4 sweet spot. |
+| 6 | lr=2.5e-4, batch=32, eps_end=0.05, eps_decay=100k | +254 | Med-fast decay. Slightly worse than fast 50k decay variant. |
+| 7 | lr=2.5e-4, batch=32, eps_end=0.05, eps_decay=50k, buffer=500k | +314 | Large buffer (500k). Deeper memory broke 300 for the first time. |
+| 8 | lr=2.5e-4, batch=64, eps_end=0.05, eps_decay=50k, buffer=500k | +308 | Batch 64 + large buffer. Stable gradients but slightly slower than batch=32. |
+| 9 | lr=2.5e-4, batch=32, eps_end=0.05, eps_decay=50k | +290 | EvalCallback run. Peak model saved via checkpointing during training. |
+| 10 | lr=3e-4, batch=32, eps_end=0.02, eps_decay=30k, buffer=500k | +310 | Ultra-fast decay + all optimizations. Strong but slightly unstable at higher LR. |
+
+**Key findings:**
+- **Fast epsilon decay (50k)** consistently outperforms slow decay — more exploitation time = higher scores.
+- **Buffer size matters:** increasing from 100k to 500k frames pushed scores from ~290 to 310+.
+- **lr=2.5e-4** is the sweet spot — both 1e-4 (too slow) and 5e-4 (too fast) perform worse.
+- **Best model: Experiment 4** (+364) using fast decay with the proven learning rate.
 
 ---
 
@@ -193,3 +199,5 @@ Open the URL shown (e.g. http://localhost:6006).
 
 - [Stable Baselines3 — DQN](https://stable-baselines3.readthedocs.io/en/stable/modules/dqn.html)
 - [Gymnasium — Atari](https://gymnasium.farama.org/environments/atari/)
+
+
