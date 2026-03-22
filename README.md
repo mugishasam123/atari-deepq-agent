@@ -4,6 +4,7 @@ Formative 3 assignment: train and evaluate a DQN agent on an Atari game using **
 
 - **Environment:** `ALE/SpaceInvaders-v5`
 - **Deliverables:** `train.py`, `play.py`, hyperparameter table, and gameplay video.
+- **Gameplay demo (YouTube):** [Trained agent playing Space Invaders (`play.py`)](https://youtu.be/15m1110atqg)
 
 ---
 
@@ -74,6 +75,8 @@ Load a trained model and run episodes with greedy action selection (deterministi
 ```bash
 python play.py --model models/dqn_model.zip --n_episodes 5
 ```
+
+**Demo video:** [Screen recording of `play.py` with the trained DQN](https://youtu.be/15m1110atqg)
 
 ---
 
@@ -174,10 +177,36 @@ Each member runs **10 different hyperparameter combinations**, records them in t
 | 9 | lr=0.0001, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=150000 | Peak ~302.9; final ~273.3. Mid-tier; better than exp 1 & 8 for same lr. |
 | 10 | lr=0.0003, gamma=0.99, batch=32, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=100000 | Peak ~290.1; final ~237.1. Reward dipped late; less stable finish than top runs. |
 
-**Best model (for `play.py`):** `models/policy-CnnPolicy_lr-0.0005_gamma-0.99_batch-32_eps1.0-0.05_decay-50000.zip`
+**Best model among Mugisha’s 10 runs (optional `play.py` checkpoint):** `models/policy-CnnPolicy_lr-0.0005_gamma-0.99_batch-32_eps1.0-0.05_decay-50000.zip`
+
+**Video (gameplay with trained agent):** [YouTube — `play.py` / Space Invaders](https://youtu.be/15m1110atqg)
 
 **Insight:** Highest mean rewards came from **lr=5×10⁻⁴** with **epsilon_decay=50,000** (exploration ends early; most steps exploit). **lr=2.5×10⁻⁴** with **epsilon_decay=150,000** was the next best. Very slow decay or low lr at 500k steps underperformed relative to fast-decay configs.
 
+---
+
+## Group best model (maximum reward)
+
+Across **all team members’** documented experiments, the **highest reward** came from **Didier Ganza** (experiment **#2** in his table). We treat this checkpoint as the **group’s best model** because it reported the **maximum** training metrics in our README: **ep_rew_mean ≈ 446** and peak **≈ 473** (TensorBoard / rollout logs), above the other members’ reported means.
+
+**Hyperparameters for that run**
+
+| Setting | Value |
+|--------|--------|
+| Policy | `CnnPolicy` |
+| Training steps | **500,000** |
+| `lr` | **0.00025** |
+| `gamma` | **0.95** |
+| `batch_size` | **64** |
+| `epsilon_start` | 1.0 |
+| `epsilon_end` | 0.05 |
+| `epsilon_decay` | 150000 |
+
+**Saved weights:** `models/policy-CnnPolicy_lr-0.00025_gamma-0.95_batch-64_eps1.0-0.05_decay-150000.zip`
+
+```bash
+python play.py --model models/policy-CnnPolicy_lr-0.00025_gamma-0.95_batch-64_eps1.0-0.05_decay-150000.zip --n_episodes 5
+```
 
 ---
 
