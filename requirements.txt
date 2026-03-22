@@ -7,3 +7,4 @@ opencv-python>=4.8,<5.0
 tensorboard
 tqdm
 rich
+setuptools>=70,<82
